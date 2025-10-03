@@ -1,0 +1,374 @@
+<div class="container  ">
+    <div class="d-flex justify-content-center mt-2">
+        <h1 class="">Drag and Drop form</h1>
+    </div>
+    <div class="form-builder d-flex justify-content-center mt-2" cdkDropListGroup>
+
+        <!-- Sidebar with form elements -->
+        <div class="form-elements">
+            <h3>Form Elements</h3>
+            <div cdkDropList [cdkDropListData]="formElements" [cdkDropListConnectedTo]="'formCanvas'"
+                class="element-list" (cdkDropListDropped)="drop($event)">
+
+
+                @for(element of formElements;track element){
+                <div class="element" cdkDrag>
+                    {{ element.label }}
+                </div>
+                }
+
+            </div>
+        </div>
+
+        <!-- Canvas to drop and build form -->
+        <div class="form-canvas" cdkDropList id="formCanvas" [cdkDropListData]="formControls"
+            (cdkDropListDropped)="drop($event)">
+            <h3>Form Canvas</h3>
+
+
+            @if(formElements.length == 6){
+            <div class="d-flex justify-content-center">
+
+                <div class="dragEmtDiv  p-4 d-flex flex-nowrap">
+                    <h4>Drop Form Elements</h4>
+                </div>
+            </div>
+            }@else {
+            <form [formGroup]="dragdropform">
+
+                @for(control of formControls;track control;let i = $index){
+                <div class="form-element-wrapper " cdkDrag>
+                    @if(control.type == 'text'|| control.type == 'email'){
+                    <div class="d-flex justify-content-between">
+                        <div class="">
+                            <mat-form-field class="no-underline custom-field" appearance="fill">
+                                <input matInput [type]="control.type" [formControlName]="control.controlName"
+                                    class="custom-input" [placeholder]="control.controlName" />
+                            </mat-form-field>
+                        </div>
+                        <div class="">
+                            <button class="remove-btn p-2" (click)="removeControl(i,control.controlName)"
+                                matTooltip="Name box drop to form element" matTooltipPosition="right" mat-raised-button
+                                matTooltipClass="custom-tooltip">
+                                <mat-icon
+                                    class="mat-del-btn align-items-center align-self-center mt-2">delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- @if(control.type == 'email'){
+                    @if( email?.invalid && email?.touched || email?.dirty){
+                    <div class="errordiv">
+                        @if(email?.errors?.['required']){
+                        <div class="text-danger word-wrap">
+                            Email is required.
+                        </div>
+                        }
+                        @if(email?.errors?.['pattern']){
+                        <div class="text-danger word-wrap">
+                            Invalid email format.
+                        </div>
+                        }
+                    </div>
+                    }
+                    } -->
+                    <!-- @if(control.type == 'number'){ -->
+                    @if(this.dragdropform.get(control.controlName)?.touched ||
+                    this.dragdropform.get(control.controlName)?.dirty){
+                    <div class="errordiv">
+                        @if(this.dragdropform.get(control.controlName)?.errors?.['notEmail'] ||
+                        this.dragdropform.get(control.controlName)?.errors?.['notNumber'] ){
+                        <div class="small text-danger word-wrap">
+                            Invalid format {{control.controlName}}
+                        </div>
+                        }@else{
+
+                        @if(this.dragdropform.get(control.controlName)?.errors?.['minlength'] ){
+                        <div class=" text-danger word-wrap">
+                            Minimum {{ control.minLength }} digits required
+                        </div>
+                        }
+                        @if(
+                        this.dragdropform.get(control.controlName)?.errors?.['maxlength']){
+                        <div class=" text-danger word-wrap">
+                            Maximum {{ control.maxLength }} digits required
+                        </div>
+                        }
+                        }
+                    </div>
+                    }
+                    <!-- } -->
+
+                    }
+                    @if(control.type == 'select'){
+                    <div class="d-flex justify-content-between">
+                        <div class="">
+                            <mat-form-field class="no-underline custom-field" appearance="fill">
+                                <mat-select [formControlName]="control.controlName" class="matSelect"
+                                    placeholder="Country">
+                                    @for(item of control.options;track item){
+                                    <mat-option [value]="item">{{item}}</mat-option>
+                                    }
+                                </mat-select>
+
+                            </mat-form-field>
+
+                        </div>
+                        <div class="">
+                            <button class="remove-btn  p-2" (click)="removeControl(i,control.controlName)"
+                                matTooltip="Country box drop to form element" matTooltipPosition="right"
+                                mat-raised-button matTooltipClass="custom-tooltip">
+                                <mat-icon
+                                    class="mat-del-btn align-items-center align-self-center mt-2">delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    }
+                    @if(control.type == 'date'){
+                    <div class="d-flex justify-content-between">
+                        <div class="">
+                            <mat-form-field class="no-underline custom-field">
+                                <div class="d-flex justify-content-between">
+                                    <div class="">
+                                        <input matInput [matDatepicker]="picker" matInput
+                                            [formControlName]="control.controlName" class=" custom-input"
+                                            placeholder="Date" readonly>
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </div>
+                                </div>
+                            </mat-form-field>
+                        </div>
+                        <div class="">
+                            <button class="remove-btn p-2" (click)="removeControl(i,control.controlName)"
+                                matTooltip="Date box drop to form element" matTooltipPosition="right" mat-raised-button
+                                matTooltipClass="custom-tooltip">
+                                <mat-icon
+                                    class="mat-del-btn align-items-center align-self-center mt-2">delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    }
+                    @if(control.type == 'checkbox' ){
+                    <div class="d-flex justify-content-between custom-field">
+                        <div class="no-underline custom-field">
+                            {{isChecked | json}}
+                            <mat-checkbox matInput type="checkbox" [formControlName]="control.controlName"
+                                class="custom-input" [checked]="isChecked()"
+                                (change)="onCheckboxChange($event.checked)">
+                                <span class="Acceptlabel">Accept
+                                    Terms</span></mat-checkbox>
+                        </div>
+
+                        <div class="">
+                            <button class="remove-btn  p-2" (click)="removeControl(i,control.controlName)"
+                                matTooltip="Terms box drop to form element" matTooltipPosition="right" mat-raised-button
+                                matTooltipClass="custom-tooltip">
+                                <mat-icon class="mat-del-btn mt-2">delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    }
+
+                    <!-- <ng-container [ngSwitch]="control.type">
+                        <div class="" *ngSwitchCase="'text'">
+                            <div class="d-flex justify-content-between">
+                                <div class="">
+                                    <mat-form-field class="no-underline custom-field" appearance="fill">
+                                        <input matInput formControlName="Name" class="custom-input"
+                                            placeholder="Name" />
+                                    </mat-form-field>
+                                </div>
+                                <div class="">
+                                    <button class="remove-btn p-2" (click)="removeControl(i,'Name')"
+                                        matTooltip="Name box drop to form element" matTooltipPosition="right"
+                                        mat-raised-button matTooltipClass="custom-tooltip">
+                                        <mat-icon
+                                            class="mat-del-btn align-items-center align-self-center mt-2">delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="" *ngSwitchCase="'email'">
+                            <div class="d-flex justify-content-between">
+                                <div class="">
+                                    <mat-form-field class="no-underline custom-field" appearance="fill">
+                                        <input matInput type="email" formControlName="Email" class="custom-input"
+                                            placeholder="Email" />
+                                    </mat-form-field>
+                                </div>
+                                <div class="">
+                                    <button class="remove-btn   p-2" (click)="removeControl(i,'Email')"
+                                        matTooltip="Email box drop to form element" matTooltipPosition="right"
+                                        mat-raised-button matTooltipClass="custom-tooltip">
+                                        <mat-icon
+                                            class="mat-del-btn align-items-center align-self-center mt-2">delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+                            @if( email?.invalid && email?.touched || email?.dirty){
+                            <div class="errordiv">
+                                @if(email?.errors?.['required']){
+                                <div class="text-danger word-wrap">
+                                    Email is required.
+                                </div>
+                                }
+                                @if(email?.errors?.['pattern']){
+                                <div class="text-danger word-wrap">
+                                    Invalid email format.
+                                </div>
+                                }
+                            </div>
+                            }
+
+                        </div>
+
+
+                        <div *ngSwitchCase="'number'">
+                            <div class="d-flex justify-content-between">
+                                <div class="">
+                                    <mat-form-field class="no-underline custom-field" appearance="fill">
+
+                                        <input matInput type="text" formControlName="Number" minlength="10"
+                                            maxlength="10" class="custom-input" placeholder="Number"
+                                            pattern="^\d{10}$" />
+                                    </mat-form-field>
+                                </div>
+                                <div class="">
+                                    <button class="remove-btn    p-2" (click)="removeControl(i,'Number')"
+                                        matTooltip="Number box drop to form element" matTooltipPosition="right"
+                                        mat-raised-button matTooltipClass="custom-tooltip">
+                                        <mat-icon
+                                            class="mat-del-btn align-items-center align-self-center mt-2">delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+
+
+
+
+                            @if(mobileControl?.touched || mobileControl?.dirty){
+                            <div class="errordiv">
+                                @if(mobileControl?.errors?.['notPattern']){
+                                <div class="small text-danger word-wrap">
+                                    Digit format required
+                                </div>
+                                }@else{
+
+                                @if(mobileControl?.errors?.['minlength'] || mobileControl?.errors?.['maxlength']){
+                                <div class=" text-danger word-wrap">
+                                    Minimum 10 digits required
+                                </div>
+                                }
+                                }
+                            </div>
+                            }
+
+
+                        </div>
+
+
+                        <div class="" *ngSwitchCase="'date'">
+                            <div class="d-flex justify-content-between">
+                                <div class="">
+                                    <mat-form-field class="no-underline custom-field">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="">
+                                                <input matInput [matDatepicker]="picker" matInput formControlName="Date"
+                                                    class=" custom-input" placeholder="Date" readonly>
+                                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                                <mat-datepicker #picker></mat-datepicker>
+                                            </div>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                                <div class="">
+                                    <button class="remove-btn p-2" (click)="removeControl(i,'Date')"
+                                        matTooltip="Date box drop to form element" matTooltipPosition="right"
+                                        mat-raised-button matTooltipClass="custom-tooltip">
+                                        <mat-icon
+                                            class="mat-del-btn align-items-center align-self-center mt-2">delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="" *ngSwitchCase="'checkbox'">
+                            <div class="d-flex justify-content-between custom-field">
+                                <div class="no-underline custom-field">
+                                    <mat-checkbox matInput type="checkbox" formControlName="Terms" class="custom-input"
+                                        [checked]="isChecked()" (change)="onCheckboxChange($event.checked)">
+                                        <span class="Acceptlabel">Accept
+                                            Terms</span></mat-checkbox>
+
+
+                                </div>
+
+                                <div class="">
+                                    <button class="remove-btn  p-2" (click)="removeControl(i,'Term')"
+                                        matTooltip="Terms box drop to form element" matTooltipPosition="right"
+                                        mat-raised-button matTooltipClass="custom-tooltip">
+                                        <mat-icon class="mat-del-btn mt-2">delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="" *ngSwitchCase="'select'">
+                            <div class="d-flex justify-content-between">
+                                <div class="">
+                                    <mat-form-field class="no-underline custom-field" appearance="fill">
+
+                                        <mat-select formControlName="Country" class="matSelect" placeholder="Country">
+                                            <mat-option value="India">India</mat-option>
+                                            <mat-option value="USA">USA</mat-option>
+                                            <mat-option value="UK">UK</mat-option>
+                                        </mat-select>
+
+                                    </mat-form-field>
+
+                                </div>
+                                <div class="">
+                                    <button class="remove-btn  p-2" (click)="removeControl(i,'Country')"
+                                        matTooltip="Country box drop to form element" matTooltipPosition="right"
+                                        mat-raised-button matTooltipClass="custom-tooltip">
+                                        <mat-icon
+                                            class="mat-del-btn align-items-center align-self-center mt-2">delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </ng-container> -->
+
+                </div>
+                }
+                <div class="d-flex justify-content-between  ">
+                    <button type="button" (click)="onSubmit()" class="bottomBtn">Save Form</button>
+                    <button mat-button class="bottomBtn" (click)="reset()" matTooltip="Clear Form"
+                        matTooltipPosition="right" mat-raised-button matTooltipClass="custom-tooltip">Clear
+                        Form</button>
+                </div>
+            </form>
+            }
+
+
+
+
+
+
+        </div>
+
+    </div>
+</div>

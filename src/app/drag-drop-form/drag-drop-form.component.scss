@@ -1,0 +1,199 @@
+/* form-builder.component.scss */
+.maintag {
+    height: 100vh;
+    background: lightgreen;
+}
+
+.form-builder {
+    display: flex;
+    gap: 2rem;
+}
+
+.form-elements,
+.form-canvas {
+    border: 1px dashed #ccc;
+    padding: 1rem;
+    width: 500px;
+    min-height: 300px;
+}
+
+.element {
+    background: #eee;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    cursor: move;
+}
+
+.form-element-wrapper {
+    position: relative;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background: #fafafa;
+    height: 80px;
+}
+
+.remove-btn {
+    background-color: transparent;
+    color: white;
+    border: none;
+    cursor: pointer;
+    outline: none;
+}
+
+.mat-del-btn {
+    color: #e74c3c;
+    font-size: 22px !important;
+    // padding-top: 4px;
+}
+
+.w250 {
+    width: 250px;
+}
+
+.no-underline ::ng-deep .mdc-line-ripple {
+    display: none !important;
+}
+
+.no-underline ::ng-deep .mat-mdc-form-field-flex {
+    position: relative;
+    top: -10px !important;
+}
+
+::ng-deep .mat-mdc-select-panel,
+::ng-deep .mat-datepicker-content {
+    background: #fafafa !important;
+}
+
+::ng-deep.custom-field label {
+    // position: absolute;
+    // top: 20px !important;
+    // left: 10px;
+    position: relative;
+    top: 8px;
+    transition: none !important;
+    transform: none !important;
+}
+
+// ::ng-deep.custom-field label.floating {
+//     top: 0;
+//     font-size: 12px;
+//     color: blue;
+// }
+
+::ng-deep .dateinput {
+    width: 210px;
+}
+
+.dateinputdiv ::ng-deep .mat-mdc-text-field-wrapper,
+::ng-deep .mat-mdc-select-min-line {
+    position: relative !important;
+    top: 10px !important;
+}
+
+// ::ng-deep .mat-mdc-select-panel {
+//     background: transparent !important;
+// }
+.matSelect ::ng-deep .mat-mdc-select-value {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    display: block !important;
+    background: transparent !important;
+}
+
+::ng-deep .mat-datepicker-toggle {
+    position: relative !important;
+    left: -18px !important;
+}
+
+::ng-deep .Acceptlabel {
+    position: relative;
+    top: -10px;
+}
+
+::ng-deep.custom-input {
+    position: absolute !important;
+    left: 0px !important;
+    top: 20px !important;
+    width: 100% !important;
+    background: transparent !important;
+    outline: none !important;
+    border: none !important;
+    width: 100% !important;
+    min-height: 40px !important;
+    box-shadow: none !important;
+}
+
+::ng-deep.custom-input::placeholder {
+    position: absolute !important;
+    left: -2px;
+}
+
+::ng-deep .mat-mdc-form-field-infix {
+    position: absolute !important;
+    top: -8px !important;
+    min-width: 300px !important;
+}
+
+::ng-deep.mat-mdc-text-field-wrapper {
+    position: relative !important;
+    top: -10px !important;
+    left: 0px !important;
+    min-width: 210px !important;
+}
+
+::ng-deep.mat-mdc-input-element {
+    position: absolute !important;
+    // left: 10px !important;
+    // top: 20px !important;
+    // min-width: 250px !important;
+    min-width: 180px !important;
+
+    background: transparent !important;
+    border: none !important;
+}
+
+::ng-deep .custom-tooltip {
+    background-color: #e74c3c;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    position: relative !important;
+    right: 20px !important;
+}
+
+::ng-deep .custom-tooltip::after {
+    content: '';
+    font-size: 10px;
+    position: absolute;
+    left: -11px;
+    position: absolute;
+    top: 8px;
+    transform: rotate(-90deg);
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent #e74c3c transparent;
+}
+
+.mat-datepicker-toggle {
+    position: absolute !important;
+    left: 154px !important;
+}
+
+.errordiv {
+    position: relative;
+    top: -34px;
+    font-size: 12px;
+}
+
+.bottomBtn {
+    border: 1px solid #ccc;
+    background: #fafafa !important;
+}
+
+.dragEmtDiv {
+    position: relative;
+    top: 50px;
+    opacity: 0.6;
+}
