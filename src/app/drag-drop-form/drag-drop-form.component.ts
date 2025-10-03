@@ -29,31 +29,40 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './drag-drop-form.component.scss'
 })
 export class DragDropFormComponent {
-  dragdropform: FormGroup = new FormGroup({
-    Name: new FormControl(''),
-    Email: new FormControl('', Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/)),
-    Number: new FormControl('',
-      [
-        Validators.minLength(10),
-        Validators.maxLength(10),
-        this.notPatternValidator(/[a-zA-Z]/)
-      ]),
-    Date: new FormControl(''),
-    Country: new FormControl(''),
-    Terms: new FormControl(''),
+  // moveLabel = true;
+  // dragdropform: FormGroup = new FormGroup({
+  //   Name: new FormControl(''),
+  //   Email: new FormControl('', Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/)),
+  //   Number: new FormControl('',
+  //     [
+  //       Validators.minLength(10),
+  //       Validators.maxLength(10),
+  //       this.dynamicPatternValidator({
+  //         requiredPattern: /^\d{10}$/,   // exactly 10 digits
+  //         forbiddenPattern: /[a-zA-Z]/,  // no letters allowed
+  //         errorKey: 'notNumber'
+  //       })
+  //     ]),
+  //   Date: new FormControl(''),
+  //   Country: new FormControl(''),
+  //   Terms: new FormControl(''),
 
-  });
+  // });
+  dragdropform!: FormGroup;
   formElements = [
-    { type: 'text', label: 'Text Input', controlName: 'Name', pattern: '', minLength: '', maxLength: '' },
-    { type: 'email', label: 'Email Input', controlName: 'Email', pattern: '/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/', minLength: '', maxLength: '' },
-    { type: 'text', label: 'Number Input', controlName: 'Number', pattern: '^\d{10}$', minLength: '10', maxLength: '10' },
-    { type: 'date', label: 'Date Input', controlName: 'Date', pattern: '', minLength: '', maxLength: '' },
-    { type: 'select', label: 'Country', controlName: 'Country', options: ['India', 'USA', 'UK'], pattern: '', minLength: '', maxLength: '' },
-    { type: 'checkbox', label: 'Accept Terms', controlName: 'Terms', pattern: '', minLength: '', maxLength: '' }
+    { type: 'text', label: 'Text Input', placeholder: 'Name', controlName: 'Name', pattern: '', minLength: '', maxLength: '', required: true },
+    { type: 'email', label: 'Email Input', placeholder: 'Email', controlName: 'Email', pattern: '/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/', minLength: '', maxLength: '', required: true },
+    { type: 'text', label: 'Number Input', placeholder: 'Number', controlName: 'Number', pattern: '^\d{10}$', minLength: '10', maxLength: '10', required: true },
+    { type: 'date', label: 'Date Input', placeholder: 'Date', controlName: 'Date', pattern: '', minLength: '', maxLength: '', required: true },
+    { type: 'select', label: 'Country', placeholder: 'Country', controlName: 'Country', options: ['India', 'USA', 'UK'], pattern: '', minLength: '', maxLength: '', required: true },
+    { type: 'checkbox', label: 'Accept Terms', placeholder: 'Terms', controlName: 'Terms', pattern: '', minLength: '', maxLength: '', required: true }
   ];
   formControls: any[] = [];
   isChecked = signal(false)
-  constructor() { }
+
+
+
+  constructor(private toastrService: ToastrService) { }
 
   ngOnInit(): void {
     const saved = localStorage.getItem('Saved Controls');
@@ -71,6 +80,32 @@ export class DragDropFormComponent {
       this.formElements;
     }
 
+    // this.dragdropform = new FormGroup({});
+    this.dragdropform = new FormGroup({
+      Name: new FormControl(''),
+      Email: new FormControl('', Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/)),
+      Number: new FormControl('',
+        [
+          Validators.minLength(10),
+          Validators.maxLength(10),
+          this.dynamicPatternValidator({
+            requiredPattern: /^\d{10}$/,   // exactly 10 digits
+            forbiddenPattern: /[a-zA-Z]/,  // no letters allowed
+            errorKey: 'notNumber'
+          })
+        ]),
+      Date: new FormControl(''),
+      Country: new FormControl(''),
+      Terms: new FormControl(''),
+
+    });
+
+    this.formElements.forEach(control => {
+      this.dragdropform.addControl(
+        control.controlName,
+        new FormControl('', this.buildValidators(control))
+      );
+    });
 
     if (formDataSTG != null) {
       const formData = JSON.parse(formDataSTG)
@@ -79,7 +114,7 @@ export class DragDropFormComponent {
         this.reset();
       } else {
         // console.log(formData)
-        // this.dragdropform.patchValue(formData);
+
         this.dragdropform.controls["Name"]?.setValue(formData["Name"]);
         this.dragdropform.controls["Email"]?.setValue(formData["Email"]);
         this.dragdropform.controls["Number"]?.setValue(formData["Number"]);
@@ -106,14 +141,34 @@ export class DragDropFormComponent {
     this.formControls;
   }
 
+  buildValidators(control: any) {
+    const validators = [];
+
+    if (control.pattern) {
+      validators.push(Validators.pattern(control.pattern));
+    }
+    if (control.minLength) {
+      validators.push(Validators.minLength(control.minLength));
+    }
+    if (control.maxLength) {
+      validators.push(Validators.maxLength(control.maxLength));
+    }
+    if (control.required) {
+      validators.push(Validators.required);
+    }
+
+    return validators;
+  }
+
+
   formNullCase() {
     var formElements = [
-      { type: 'text', label: 'Text Input', controlName: 'Name', pattern: '', minLength: '', maxLength: '' },
-      { type: 'email', label: 'Email Input', controlName: 'Email', pattern: '/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/', minLength: '', maxLength: '' },
-      { type: 'text', label: 'Number Input', controlName: 'Number', pattern: '^\d{10}$', minLength: '10', maxLength: '10' },
-      { type: 'date', label: 'Date Input', controlName: 'Date', pattern: '', minLength: '', maxLength: '' },
-      { type: 'select', label: 'Country', controlName: 'Country', options: ['India', 'USA', 'UK'], pattern: '', minLength: '', maxLength: '' },
-      { type: 'checkbox', label: 'Accept Terms', controlName: 'Terms', pattern: '', minLength: '', maxLength: '' }
+      { type: 'text', label: 'Text Input', placeholder: 'Name', controlName: 'Name', pattern: '', minLength: '', maxLength: '', required: true },
+      { type: 'email', label: 'Email Input', placeholder: 'Email', controlName: 'Email', pattern: '/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/', minLength: '', maxLength: '', required: true },
+      { type: 'text', label: 'Number Input', placeholder: 'Number', controlName: 'Number', pattern: '^\d{10}$', minLength: '10', maxLength: '10', required: true },
+      { type: 'date', label: 'Date Input', placeholder: 'Date', controlName: 'Date', pattern: '', minLength: '', maxLength: '', required: true },
+      { type: 'select', label: 'Country', placeholder: 'Country', controlName: 'Country', options: ['India', 'USA', 'UK'], pattern: '', minLength: '', maxLength: '', required: true },
+      { type: 'checkbox', label: 'Accept Terms', placeholder: 'Terms', controlName: 'Terms', pattern: '', minLength: '', maxLength: '', required: true }
     ];
     var formControls: any[] = [];
     this.formElements = formElements;
@@ -206,16 +261,33 @@ export class DragDropFormComponent {
     this.saveFCState();
     this.saveFEState();
   }
-  notPatternValidator(forbiddenPattern: RegExp): ValidatorFn {
+  dynamicPatternValidator({
+    requiredPattern,
+    forbiddenPattern,
+    errorKey = 'patternError'
+  }: {
+    requiredPattern?: RegExp,
+    forbiddenPattern?: RegExp,
+    errorKey?: string
+  }): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
       if (!value) return null; // allow empty if not required
-      return forbiddenPattern.test(value)
-        ? { notPattern: { value: value } }
-        : null;
+
+      if (requiredPattern && !requiredPattern.test(value)) {
+        return { [errorKey]: true };
+      }
+
+      if (forbiddenPattern && forbiddenPattern.test(value)) {
+        return { [errorKey]: true };
+      }
+
+      return null;
     };
   }
+
 }
+
 
 
 
