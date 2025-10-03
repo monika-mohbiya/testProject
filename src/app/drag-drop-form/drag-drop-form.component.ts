@@ -14,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatNativeDateModule } from '@angular/material/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-drag-drop-form',
   imports: [DragDropModule, CommonModule, ReactiveFormsModule, MatButtonModule, MatTooltipModule,
@@ -28,20 +29,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   styleUrl: './drag-drop-form.component.scss'
 })
 export class DragDropFormComponent {
-  // moveLabel = true;
   dragdropform: FormGroup = new FormGroup({
-    Name: new FormControl('', [this.customPatternValidator({ forbiddenPattern: /[^a-zA-Z\s]/, errorKey: 'notText' })]),
-    Email: new FormControl('',
-      [this.customPatternValidator({
-        requiredPattern: /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-        errorKey: 'notEmail'
-      })]
-    ),
+    Name: new FormControl(''),
+    Email: new FormControl('', Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/)),
     Number: new FormControl('',
       [
         Validators.minLength(10),
         Validators.maxLength(10),
-        this.customPatternValidator({ forbiddenPattern: /[^0-9]/, errorKey: 'notNumber' })
+        this.notPatternValidator(/[a-zA-Z]/)
       ]),
     Date: new FormControl(''),
     Country: new FormControl(''),
@@ -50,107 +45,76 @@ export class DragDropFormComponent {
   });
   formElements = [
     { type: 'text', label: 'Text Input', controlName: 'Name', pattern: '', minLength: '', maxLength: '' },
-    { type: 'email', label: 'Email Input', controlName: 'Email', pattern: '^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$', minLength: '', maxLength: '' },
+    { type: 'email', label: 'Email Input', controlName: 'Email', pattern: '/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/', minLength: '', maxLength: '' },
     { type: 'text', label: 'Number Input', controlName: 'Number', pattern: '^\d{10}$', minLength: '10', maxLength: '10' },
     { type: 'date', label: 'Date Input', controlName: 'Date', pattern: '', minLength: '', maxLength: '' },
     { type: 'select', label: 'Country', controlName: 'Country', options: ['India', 'USA', 'UK'], pattern: '', minLength: '', maxLength: '' },
     { type: 'checkbox', label: 'Accept Terms', controlName: 'Terms', pattern: '', minLength: '', maxLength: '' }
   ];
-
-  formControls: any;
+  formControls: any[] = [];
   isChecked = signal(false)
-
   constructor() { }
-  buildValidators(control: any) {
-    const validators = [];
-
-    // Required field
-    if (control.required) {
-      validators.push(Validators.required);
-    }
-
-    // Min length
-    if (control.minLength) {
-      validators.push(Validators.minLength(Number(control.minLength)));
-    }
-
-    // Max length
-    if (control.maxLength) {
-      validators.push(Validators.maxLength(Number(control.maxLength)));
-    }
-
-    // Normal regex pattern
-    if (control.pattern) {
-      validators.push(Validators.pattern(control.pattern));
-    }
-
-    // 🔹 Custom Validators according to control type / name
-    if (control.controlName === 'Name') {
-      validators.push(
-        this.customPatternValidator({
-          forbiddenPattern: /[^a-zA-Z\s]/,
-          errorKey: 'notText'
-        })
-      );
-    }
-
-    if (control.controlName === 'Email') {
-      validators.push(
-        this.customPatternValidator({
-          requiredPattern: /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-          errorKey: 'notEmail'
-        })
-      );
-    }
-
-    if (control.controlName === 'Number') {
-      validators.push(
-        this.customPatternValidator({
-          forbiddenPattern: /[^0-9]/,
-          errorKey: 'notNumber'
-        })
-      );
-    }
-
-    return validators;
-  }
-
 
   ngOnInit(): void {
-    const savedRaw = localStorage.getItem('Saved Controls');
-    this.formControls = savedRaw ? JSON.parse(savedRaw) : null;
-    // console.log(this.formControls);
+    const saved = localStorage.getItem('Saved Controls');
+    const savedEMT = localStorage.getItem('Saved Elements');
+    const formDataSTG = localStorage.getItem('Form Data');
+    // console.log(formDataSTG)
+    if (saved) {
+      this.formControls = JSON.parse(saved);
+    } else {
+      this.formControls;
+    }
+    if (savedEMT) {
+      this.formElements = JSON.parse(savedEMT);
+    } else {
+      this.formElements;
+    }
 
-    // 🔹 Initialize FormGroup dynamically
-    this.dragdropform = new FormGroup({});
 
-    this.formElements.forEach((control: any) => {
-      this.dragdropform.addControl(
-        control.controlName,
-        new FormControl('', this.buildValidators(control))
-      );
-    });
+    if (formDataSTG != null) {
+      const formData = JSON.parse(formDataSTG)
+      if (formData["Name"] == null && formData["Email"] == null && formData["Number"] == null && formData["Date"] == null && formData["Terms"] == null && formData["Country"] == null) {
+        this.formNullCase();
+        this.reset();
+      } else {
+        // console.log(formData)
+        // this.dragdropform.patchValue(formData);
+        this.dragdropform.controls["Name"]?.setValue(formData["Name"]);
+        this.dragdropform.controls["Email"]?.setValue(formData["Email"]);
+        this.dragdropform.controls["Number"]?.setValue(formData["Number"]);
+        this.dragdropform.controls["Date"]?.setValue(formData["Date"]);
 
-    const savedEMTRaw = localStorage.getItem('Saved Elements');
-    this.formElements = savedEMTRaw ? JSON.parse(savedEMTRaw) : null;
-    // console.log(this.formElements);
+        if (formData["terms"] == true) {
+          this.isChecked.set(true);
 
-    const formDataSTGRaw = localStorage.getItem('Form Data');
-    const formData = formDataSTGRaw ? JSON.parse(formDataSTGRaw) : null;
-    // console.log(formData);
-    this.dragdropform.patchValue(formData);
+        } else {
+          this.isChecked.set(false);
+        }
+        this.dragdropform.controls["Terms"]?.setValue(this.isChecked);
+        this.dragdropform.controls["Country"]?.setValue(formData["Country"]);
+        this.formElements;
+        this.formControls;
+      }
 
+    } else {
+      this.formElements;
+      this.formControls;
+
+    }
+    this.formElements;
+    this.formControls;
   }
+
   formNullCase() {
     var formElements = [
       { type: 'text', label: 'Text Input', controlName: 'Name', pattern: '', minLength: '', maxLength: '' },
-      { type: 'email', label: 'Email Input', controlName: 'Email', pattern: '^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$', minLength: '', maxLength: '' },
+      { type: 'email', label: 'Email Input', controlName: 'Email', pattern: '/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/', minLength: '', maxLength: '' },
       { type: 'text', label: 'Number Input', controlName: 'Number', pattern: '^\d{10}$', minLength: '10', maxLength: '10' },
       { type: 'date', label: 'Date Input', controlName: 'Date', pattern: '', minLength: '', maxLength: '' },
       { type: 'select', label: 'Country', controlName: 'Country', options: ['India', 'USA', 'UK'], pattern: '', minLength: '', maxLength: '' },
       { type: 'checkbox', label: 'Accept Terms', controlName: 'Terms', pattern: '', minLength: '', maxLength: '' }
     ];
-
     var formControls: any[] = [];
     this.formElements = formElements;
     this.formControls = formControls;
@@ -239,37 +203,18 @@ export class DragDropFormComponent {
     if (removedItem) {
       this.formElements.push(removedItem); // add back to formElements
     }
-    // this.saveFCState();
-    // this.saveFEState();
+    this.saveFCState();
+    this.saveFEState();
   }
-  customPatternValidator({
-    requiredPattern,
-    forbiddenPattern,
-    errorKey = 'patternError'
-  }: {
-    requiredPattern?: RegExp;      // agar value is pattern se match karni hai
-    forbiddenPattern?: RegExp;     // agar value is pattern se match NA karni hai
-    errorKey?: string;             // custom error key
-  }): ValidatorFn {
+  notPatternValidator(forbiddenPattern: RegExp): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
-      if (!value) return null;
-
-      // requiredPattern check (match hona chahiye)
-      if (requiredPattern && !requiredPattern.test(value)) {
-        return { [errorKey]: true };
-      }
-
-      // forbiddenPattern check (match nahi hona chahiye)
-      if (forbiddenPattern && forbiddenPattern.test(value)) {
-        return { [errorKey]: true };
-      }
-
-      return null;
+      if (!value) return null; // allow empty if not required
+      return forbiddenPattern.test(value)
+        ? { notPattern: { value: value } }
+        : null;
     };
   }
-
-
 }
 
 
