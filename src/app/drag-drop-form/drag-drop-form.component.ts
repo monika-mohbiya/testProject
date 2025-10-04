@@ -29,25 +29,6 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './drag-drop-form.component.scss'
 })
 export class DragDropFormComponent {
-  // moveLabel = true;
-  // dragdropform: FormGroup = new FormGroup({
-  //   Name: new FormControl(''),
-  //   Email: new FormControl('', Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/)),
-  //   Number: new FormControl('',
-  //     [
-  //       Validators.minLength(10),
-  //       Validators.maxLength(10),
-  //       this.dynamicPatternValidator({
-  //         requiredPattern: /^\d{10}$/,   // exactly 10 digits
-  //         forbiddenPattern: /[a-zA-Z]/,  // no letters allowed
-  //         errorKey: 'notNumber'
-  //       })
-  //     ]),
-  //   Date: new FormControl(''),
-  //   Country: new FormControl(''),
-  //   Terms: new FormControl(''),
-
-  // });
   dragdropform!: FormGroup;
   formElements = [
     { type: 'text', label: 'Text Input', placeholder: 'Name', controlName: 'Name', pattern: '', minLength: '', maxLength: '', required: true },
@@ -59,8 +40,6 @@ export class DragDropFormComponent {
   ];
   formControls: any[] = [];
   isChecked = signal(false)
-
-
 
   constructor(private toastrService: ToastrService) { }
 
@@ -80,16 +59,21 @@ export class DragDropFormComponent {
       this.formElements;
     }
 
-    // this.dragdropform = new FormGroup({});
     this.dragdropform = new FormGroup({
       Name: new FormControl(''),
-      Email: new FormControl('', Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/)),
+      Email: new FormControl('', [
+        this.dynamicPatternValidator({
+          requiredPattern: /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+          // forbiddenPattern: /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,  // no letters allowed
+          errorKey: 'notEmail'
+        })
+      ]),
       Number: new FormControl('',
         [
           Validators.minLength(10),
           Validators.maxLength(10),
           this.dynamicPatternValidator({
-            requiredPattern: /^\d{10}$/,   // exactly 10 digits
+            // requiredPattern: /^\d{10}$/,   // exactly 10 digits
             forbiddenPattern: /[a-zA-Z]/,  // no letters allowed
             errorKey: 'notNumber'
           })
@@ -178,32 +162,35 @@ export class DragDropFormComponent {
     this.isChecked.set(val);
   }
   onSubmit(): void {
-    // Get the old value from localStorage
-    const oldValueRaw = localStorage.getItem('Form Data');
-    const oldValue = oldValueRaw ? JSON.parse(oldValueRaw) : null;
+    if (this.dragdropform.valid) {
+      // Get the old value from localStorage
+      const oldValueRaw = localStorage.getItem('Form Data');
+      const oldValue = oldValueRaw ? JSON.parse(oldValueRaw) : null;
 
 
-    // Function to compare objects deeply
-    function isEqual(a: any, b: any): boolean {
-      return JSON.stringify(a) === JSON.stringify(b);
-    }
+      // Function to compare objects deeply
+      function isEqual(a: any, b: any): boolean {
+        return JSON.stringify(a) === JSON.stringify(b);
+      }
 
-    if (isEqual(oldValue, this.dragdropform.value)) {
-      // If both are deeply equal
-      console.log('⚠️ Values are same. No update needed.');
+      if (isEqual(oldValue, this.dragdropform.value)) {
+        // If both are deeply equal
+        console.log('⚠️ Values are same. No update needed.');
+      } else {
+        // If there's any difference: missing key, extra key, value change
+        localStorage.setItem('Form Data', JSON.stringify(this.dragdropform.value));
+
+        console.log('✅ Values were different. LocalStorage updated.');
+      }
+
+
+      this.saveFCState();
+      this.saveFEState();
+      this.formNullCase()
+      this.dragdropform.reset();
     } else {
-      // If there's any difference: missing key, extra key, value change
-      localStorage.setItem('Form Data', JSON.stringify(this.dragdropform.value));
-
-      console.log('✅ Values were different. LocalStorage updated.');
+      alert()
     }
-
-
-    this.saveFCState();
-    this.saveFEState();
-    this.formNullCase()
-    this.dragdropform.reset();
-
   }
 
   reset(): void {
@@ -284,6 +271,23 @@ export class DragDropFormComponent {
 
       return null;
     };
+  }
+  getErrorMessage(controlName: string, control: any): string {
+    const formCtrl = this.dragdropform.get(controlName);
+
+    if (formCtrl?.hasError('required')) {
+      return `${control.label} is required`;
+    }
+    if (formCtrl?.errors?.['notEmail'] || formCtrl?.errors?.['notNumber']) {
+      return `Invalid format ${control.controlName}`;
+    }
+    if (formCtrl?.hasError('minlength')) {
+      return `Minimum ${control.minLength} digits required`;
+    }
+    if (formCtrl?.hasError('maxlength')) {
+      return `Maximum ${control.maxLength} digits required`;
+    }
+    return '';
   }
 
 }
