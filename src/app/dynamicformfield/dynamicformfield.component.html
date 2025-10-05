@@ -1,0 +1,115 @@
+<div class="maindiv row justify-content-center">
+    <div class="main_matcard col-md-4 position-relative align-items-center align-self-center p-4">
+
+        <form class="mt-5 border border-gray p-4" [formGroup]="dynamicform" (ngSubmit)="onSubmit()">
+            <h3 class="text-center">Dynamically Form Field</h3>
+
+            <!-- {{formElements | json}} -->
+            @for(control of formElements;track control;let i = $index){
+            @if(control.type == 'text'|| control.type == 'email'){
+            <div class="d-flex  ">
+                <div class="">
+                    <mat-form-field class="no-underline custom-field" appearance="fill">
+                        <!-- <mat-label>{{ control.label }}</mat-label> -->
+                        <input matInput [type]="control.type" [formControlName]="control.controlName"
+                            [placeholder]="control.label" [required]="control.required" class="custom-input">
+
+                    </mat-form-field>
+
+                    @if(this.dynamicform.get(control.controlName)?.touched ||
+                    this.dynamicform.get(control.controlName)?.dirty){
+
+                    @if(getErrorMessage(control.controlName, control)){
+                    <mat-error class="errordiv text-danger word-wrap">
+                        {{ getErrorMessage(control.controlName, control) }}
+                    </mat-error>
+                    }
+
+                    }
+                </div>
+                <div class="">
+                    <button class="remove-btn p-2" (click)="this.dynamicform.get(control.controlName)?.setValue('')"
+                        matTooltip="{{control.controlName}} box clear" matTooltipPosition="right" mat-raised-button
+                        matTooltipClass="custom-tooltip">
+                        <mat-icon class="mat-del-btn align-items-center align-self-center mt-2">delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+            }
+            @if(control.type == 'select'){
+            <div class="d-flex justify-content-between">
+                <div class="">
+                    <mat-form-field class="no-underline custom-field" appearance="fill">
+                        <mat-select [formControlName]="control.controlName" class="matSelect" placeholder="Country">
+                            @for(item of control.options;track item){
+                            <mat-option [value]="item">{{item}}</mat-option>
+                            }
+                        </mat-select>
+
+                    </mat-form-field>
+
+                </div>
+                <div class="">
+                    <button class="remove-btn  p-2" (click)="this.dynamicform.get(control.controlName)?.setValue('')"
+                        matTooltip="Country box clear" matTooltipPosition="right" mat-raised-button
+                        matTooltipClass="custom-tooltip">
+                        <mat-icon class="mat-del-btn align-items-center align-self-center mt-2">delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+            }
+            @if(control.type == 'date'){
+            <div class="d-flex justify-content-between">
+                <div class="">
+                    <mat-form-field class="no-underline custom-field">
+                        <div class="d-flex justify-content-between">
+                            <div class="">
+                                <input matInput [matDatepicker]="picker" matInput
+                                    [formControlName]="control.controlName" class=" custom-input" placeholder="Date"
+                                    readonly>
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </div>
+                        </div>
+                    </mat-form-field>
+                </div>
+                <div class="">
+                    <button class="remove-btn p-2" (click)="this.dynamicform.get(control.controlName)?.setValue('')"
+                        matTooltip="Date box clear" matTooltipPosition="right" mat-raised-button
+                        matTooltipClass="custom-tooltip">
+                        <mat-icon class="mat-del-btn align-items-center align-self-center mt-2">delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+            }
+            @if(control.type == 'checkbox' ){
+            <div class="d-flex justify-content-between custom-field">
+                <div class="no-underline custom-field">
+                    <mat-checkbox matInput type="checkbox" [formControlName]="control.controlName" class="custom-input"
+                        [checked]="isChecked()" (change)="onCheckboxChange($event.checked)">
+                        <span class="Acceptlabel">Accept
+                            Terms</span></mat-checkbox>
+                </div>
+
+                <div class="">
+                    <button class="remove-btn  p-2" (click)="this.dynamicform.get(control.controlName)?.setValue(false)"
+                        matTooltip="Terms box clear" matTooltipPosition="right" mat-raised-button
+                        matTooltipClass="custom-tooltip">
+                        <mat-icon class="mat-del-btn mt-2">delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            }
+
+            }
+            <div class="d-flex justify-content-between  mt-5">
+                <button type="submit" class="bottomBtn">Save Form</button>
+                <button mat-button class="bottomBtn" (click)="this.dynamicform.reset()" matTooltip="Clear Form"
+                    matTooltipPosition="right" mat-raised-button matTooltipClass="custom-tooltip">Clear
+                    Form</button>
+            </div>
+        </form>
+
+    </div>
+</div>

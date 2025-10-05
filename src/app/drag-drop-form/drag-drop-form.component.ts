@@ -15,6 +15,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ToastrService } from 'ngx-toastr';
+import { formElements } from './../form-elements.config'
 @Component({
   selector: 'app-drag-drop-form',
   imports: [DragDropModule, CommonModule, ReactiveFormsModule, MatButtonModule, MatTooltipModule,
@@ -30,14 +31,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class DragDropFormComponent {
   dragdropform!: FormGroup;
-  formElements = [
-    { type: 'text', label: 'Text Input', placeholder: 'Name', controlName: 'Name', pattern: '', minLength: '', maxLength: '', required: true },
-    { type: 'email', label: 'Email Input', placeholder: 'Email', controlName: 'Email', pattern: '/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/', minLength: '', maxLength: '', required: true },
-    { type: 'text', label: 'Number Input', placeholder: 'Number', controlName: 'Number', pattern: '^\d{10}$', minLength: '10', maxLength: '10', required: true },
-    { type: 'date', label: 'Date Input', placeholder: 'Date', controlName: 'Date', pattern: '', minLength: '', maxLength: '', required: true },
-    { type: 'select', label: 'Country', placeholder: 'Country', controlName: 'Country', options: ['India', 'USA', 'UK'], pattern: '', minLength: '', maxLength: '', required: true },
-    { type: 'checkbox', label: 'Accept Terms', placeholder: 'Terms', controlName: 'Terms', pattern: '', minLength: '', maxLength: '', required: true }
-  ];
+  formElements = formElements;
   formControls: any[] = [];
   isChecked = signal(false)
 
@@ -60,11 +54,17 @@ export class DragDropFormComponent {
     }
 
     this.dragdropform = new FormGroup({
-      Name: new FormControl(''),
+      Name: new FormControl('', [
+        Validators.minLength(3),
+        Validators.maxLength(30),
+        this.dynamicPatternValidator({
+          requiredPattern: /^[A-Za-z]+( [A-Za-z]+)*$/,
+          errorKey: 'nottxt'
+        })
+      ]),
       Email: new FormControl('', [
         this.dynamicPatternValidator({
           requiredPattern: /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-          // forbiddenPattern: /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,  // no letters allowed
           errorKey: 'notEmail'
         })
       ]),
@@ -82,13 +82,6 @@ export class DragDropFormComponent {
       Country: new FormControl(''),
       Terms: new FormControl(''),
 
-    });
-
-    this.formElements.forEach(control => {
-      this.dragdropform.addControl(
-        control.controlName,
-        new FormControl('', this.buildValidators(control))
-      );
     });
 
     if (formDataSTG != null) {
@@ -125,34 +118,23 @@ export class DragDropFormComponent {
     this.formControls;
   }
 
-  buildValidators(control: any) {
-    const validators = [];
 
-    if (control.pattern) {
-      validators.push(Validators.pattern(control.pattern));
-    }
-    if (control.minLength) {
-      validators.push(Validators.minLength(control.minLength));
-    }
-    if (control.maxLength) {
-      validators.push(Validators.maxLength(control.maxLength));
-    }
-    if (control.required) {
-      validators.push(Validators.required);
-    }
-
-    return validators;
-  }
 
 
   formNullCase() {
     var formElements = [
-      { type: 'text', label: 'Text Input', placeholder: 'Name', controlName: 'Name', pattern: '', minLength: '', maxLength: '', required: true },
-      { type: 'email', label: 'Email Input', placeholder: 'Email', controlName: 'Email', pattern: '/^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/', minLength: '', maxLength: '', required: true },
-      { type: 'text', label: 'Number Input', placeholder: 'Number', controlName: 'Number', pattern: '^\d{10}$', minLength: '10', maxLength: '10', required: true },
-      { type: 'date', label: 'Date Input', placeholder: 'Date', controlName: 'Date', pattern: '', minLength: '', maxLength: '', required: true },
-      { type: 'select', label: 'Country', placeholder: 'Country', controlName: 'Country', options: ['India', 'USA', 'UK'], pattern: '', minLength: '', maxLength: '', required: true },
-      { type: 'checkbox', label: 'Accept Terms', placeholder: 'Terms', controlName: 'Terms', pattern: '', minLength: '', maxLength: '', required: true }
+      { type: 'text', label: 'Text Input', placeholder: 'Name', controlName: 'Name', pattern: '^[A-Za-z]+( [A-Za-z]+)*$', minLength: 3, maxLength: 30, required: true, requiredPattern: /^[A-Za-z]+( [A-Za-z]+)*$/, errorKey: 'nottxt', txttype: 'word' },
+      {
+        type: 'email', label: 'Email Input', placeholder: 'Email', controlName: 'Email', pattern: '^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$', minLength: null, maxLength: null, required: true, requiredPattern: /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+        errorKey: 'notEmail'
+      },
+      {
+        type: 'text', label: 'Number Input', placeholder: 'Number', controlName: 'Number', pattern: '^[0-9]+$', minLength: 10, maxLength: 10, required: true, txttype: 'number', requiredPattern: /^[0-9]+$/,
+        errorKey: 'notNumber'
+      },
+      { type: 'date', label: 'Date Input', placeholder: 'Date', controlName: 'Date', pattern: '', minLength: null, maxLength: null, required: true },
+      { type: 'select', label: 'Country', placeholder: 'Country', controlName: 'Country', options: ['India', 'USA', 'UK'], pattern: '', minLength: null, maxLength: null, required: true },
+      { type: 'checkbox', label: 'Accept Terms', placeholder: 'Terms', controlName: 'Terms', pattern: '', minLength: null, maxLength: null, required: true }
     ];
     var formControls: any[] = [];
     this.formElements = formElements;
@@ -248,6 +230,44 @@ export class DragDropFormComponent {
     this.saveFCState();
     this.saveFEState();
   }
+
+  buildValidators(control: any) {
+    const validators = [];
+
+    // Required
+    if (control.required) {
+      validators.push(Validators.required);
+    }
+
+    // Min length
+    if (control.minLength != null) {
+      validators.push(Validators.minLength(Number(control.minLength)));
+    }
+
+    // Max length
+    if (control.maxLength != null) {
+      validators.push(Validators.maxLength(Number(control.maxLength)));
+    }
+
+    // Pattern
+    if (control.pattern) {
+      validators.push(Validators.pattern(control.pattern));
+    }
+
+    // Custom dynamic pattern (like forbiddenPattern / requiredPattern)
+    if (control.forbiddenPattern || control.requiredPattern) {
+      validators.push(
+        this.dynamicPatternValidator({
+          requiredPattern: control.requiredPattern,
+          forbiddenPattern: control.forbiddenPattern,
+          errorKey: control.errorKey || 'patternError'
+        })
+      );
+    }
+
+    return validators;
+  }
+
   dynamicPatternValidator({
     requiredPattern,
     forbiddenPattern,
@@ -278,14 +298,15 @@ export class DragDropFormComponent {
     if (formCtrl?.hasError('required')) {
       return `${control.label} is required`;
     }
-    if (formCtrl?.errors?.['notEmail'] || formCtrl?.errors?.['notNumber']) {
+    if (formCtrl?.errors?.['notEmail'] || formCtrl?.errors?.['notNumber'] || formCtrl?.errors?.['nottxt']) {
       return `Invalid format ${control.controlName}`;
     }
     if (formCtrl?.hasError('minlength')) {
-      return `Minimum ${control.minLength} digits required`;
+      return `Minimum ${control.minLength}  ${control.txttype} required`;
     }
     if (formCtrl?.hasError('maxlength')) {
-      return `Maximum ${control.maxLength} digits required`;
+      return `Maximum ${control.maxLength} ${control.txttype} required`;
+
     }
     return '';
   }

@@ -1,0 +1,117 @@
+::ng-deep .mat-mdc-form-field-infix {
+    position: absolute !important;
+    top: -4px !important;
+    min-width: 300px !important;
+}
+
+.no-underline ::ng-deep .mdc-line-ripple {
+    display: none !important;
+}
+
+.no-underline ::ng-deep .mat-mdc-form-field-flex {
+    position: relative;
+    top: -10px !important;
+}
+
+::ng-deep .dateinput {
+    width: 210px;
+}
+
+.dateinputdiv ::ng-deep .mat-mdc-text-field-wrapper,
+::ng-deep .mat-mdc-select-min-line {
+    position: relative !important;
+    top: 10px !important;
+}
+
+.matSelect ::ng-deep .mat-mdc-select-value {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    display: block !important;
+    background: transparent !important;
+}
+
+::ng-deep .mat-datepicker-toggle {
+    position: relative !important;
+    left: -18px !important;
+}
+
+::ng-deep .Acceptlabel {
+    position: relative;
+    top: -10px;
+}
+
+.mat-datepicker-toggle {
+    position: absolute !important;
+    left: 250px !important;
+    top: 10px;
+}
+
+::ng-deep.mat-mdc-text-field-wrapper {
+    position: relative !important;
+    top: -10px !important;
+    left: 0px !important;
+    min-width: 350px !important;
+}
+
+.dragEmtDiv {
+    position: relative;
+    top: 50px;
+    opacity: 0.6;
+}
+
+.errordiv {
+    position: relative;
+    top: -34px;
+    font-size: 12px;
+}
+
+::ng-deep .mat-mdc-select-panel,
+::ng-deep .mat-datepicker-content {
+    background: #fafafa !important;
+}
+
+::ng-deep .Acceptlabel {
+    position: relative;
+    // top: -10px;
+    top: 2px;
+}
+
+::ng-deep.mat-mdc-input-element {
+    position: relative !important;
+    top: 4px;
+    min-width: 180px !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+::ng-deep .mat-mdc-text-field-input {
+    width: 100% !important;
+}
+
+.remove-btn {
+    position: absolute;
+    right: 24px;
+}
+
+::ng-deep .custom-tooltip {
+    background-color: #e74c3c;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    position: relative !important;
+    right: 20px !important;
+}
+
+::ng-deep .custom-tooltip::after {
+    content: '';
+    font-size: 10px;
+    position: absolute;
+    left: -11px;
+    position: absolute;
+    top: 8px;
+    transform: rotate(-90deg);
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent #e74c3c transparent;
+}
