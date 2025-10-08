@@ -1,13 +1,14 @@
  .maindiv {
      height: 100vh;
-     background: lightcyan;
+     background: lightgray;
  }
 
  .main_matcard {
      width: 500px;
      //  height: 500px;
      border: 2px solid rgba(0, 0, 0, 0.125);
-     border-radius: 0.25rem;
+     border-radius: 0.50rem;
+     background: lightcyan;
  }
 
  .no-underline ::ng-deep .mdc-line-ripple {
@@ -23,4 +24,11 @@
      position: relative;
      top: -20px;
      font-size: 12px;
+ }
+
+ input[type="password"]::-ms-reveal,
+ input[type="password"]::-ms-clear,
+ input[type="password"]::-webkit-password-toggle-button {
+     display: none;
+     -webkit-appearance: none;
  }

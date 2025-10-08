@@ -1,0 +1,35 @@
+<div class="container">
+    <!-- @if(showtoken){ -->
+
+    <div class="row justify-content-center">
+        <mat-card class="col-md-4">
+            <app-commoncard>
+                <div card-title>Angular 19 ng-content Example</div>
+                <div card-body>
+                    <p>This is the body content projected into the card.</p>
+                </div>
+                <button card-btn (click)="routeNav('ddform')">Drag & Drop form</button>
+            </app-commoncard>
+
+        </mat-card>
+        <mat-card class="col-md-4">
+            <app-commoncard>
+                <div card-title>Angular 19 ng-content Example</div>
+                <div card-body>
+                    <p>This is the body content projected into the card.</p>
+                </div>
+                <button card-btn (click)="routeNav('dynamicform')">Dynamic form field</button>
+            </app-commoncard>
+        </mat-card>
+        <mat-card class="col-md-4">
+            <app-commoncard>
+                <div card-title>Angular 19 ng-content Example</div>
+                <div card-body>
+                    <p>This is the body content projected into the card.</p>
+                </div>
+                <button card-btn (click)="routeNav('fcm-token')">child card</button>
+            </app-commoncard>
+        </mat-card>
+    </div>
+    <!-- } -->
+</div>
