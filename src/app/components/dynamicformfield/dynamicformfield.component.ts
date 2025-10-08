@@ -10,7 +10,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { formElements } from '../form-elements.config';
+import { formElements } from '../../form-elements.config';
 
 @Component({
   selector: 'app-dynamicformfield',

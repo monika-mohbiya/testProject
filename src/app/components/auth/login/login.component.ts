@@ -43,7 +43,7 @@ export class LoginComponent {
   }
 
   setupFirebaseMessaging() {
-    if (isPlatformBrowser(this.platformId) && 'Notification' in window) {
+    if (isPlatformBrowser(this.platformId)) {
       const app = initializeApp(environment.firebase);
       this.messaging = getMessaging(app);
 

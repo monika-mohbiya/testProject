@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { DashboardComponent } from './auth/dashboard/dashboard.component';
-import { LoginComponent } from './auth/login/login.component';
-import { DragDropFormComponent } from './drag-drop-form/drag-drop-form.component';
 import { canActivateGuard } from './can-activate.guard';
-import { DynamicformfieldComponent } from './dynamicformfield/dynamicformfield.component';
+import { DashboardComponent } from './components/auth/dashboard/dashboard.component';
+import { LoginComponent } from './components/auth/login/login.component';
+import { DragDropFormComponent } from './components/drag-drop-form/drag-drop-form.component';
+import { DynamicformfieldComponent } from './components/dynamicformfield/dynamicformfield.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },

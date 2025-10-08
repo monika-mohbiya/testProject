@@ -15,7 +15,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ToastrService } from 'ngx-toastr';
-import { formElements } from './../form-elements.config'
+import { formElements } from '../../form-elements.config';
 @Component({
   selector: 'app-drag-drop-form',
   imports: [DragDropModule, CommonModule, ReactiveFormsModule, MatButtonModule, MatTooltipModule,
