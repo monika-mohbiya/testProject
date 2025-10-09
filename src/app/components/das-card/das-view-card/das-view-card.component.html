@@ -6,14 +6,70 @@
         }
     </div>
 
-    <div>
-        @if(product.tags?.length != undefined){
-        {{ product.tags[1] }}
-        }
+    <div class="row">
+        <div class="col-md-2 titleTxt">Product Name</div>
+        <div class="col-md-10 titleGetTxt">
+
+            @if(product.tags?.length != undefined){
+            {{ product.tags[1] }}
+            }
+
+
+
+
+        </div>
+
+        <div class="col-md-2 titleTxt">Description</div>
+        <div class="col-md-10 titleGetTxt">
+            {{product.description}}
+        </div>
+
+        <div class="col-md-2 titleTxt">Availability Status</div>
+        <div class="col-md-10 titleGetTxt">
+            {{product.availabilityStatus}}
+        </div>
+
+        <div class="col-md-2 titleTxt">Brand</div>
+        <div class="col-md-10 titleGetTxt">
+
+            {{product.brand}}
+
+        </div>
+
+        <div class="col-md-2 titleTxt">Dimensions</div>
+        <div class="col-md-10 titleGetTxt">
+
+            {{product.dimensions}}
+
+        </div>
+
+        <div class="col-md-2 titleTxt">Price</div>
+        <div class="col-md-10 titleGetTxt">
+
+            {{product.price}}
+
+        </div>
+
+        <div class="col-md-2 titleTxt">Return Policy</div>
+        <div class="col-md-10 titleGetTxt">
+
+            {{product.returnPolicy}}
+
+        </div>
+
+        <div class="col-md-2 titleTxt">Warranty Information</div>
+        <div class="col-md-10 titleGetTxt">
+
+            {{product.warrantyInformation}}
+
+        </div>
+
+        <div class="col-md-2 titleTxt">Weight</div>
+        <div class="col-md-10 titleGetTxt">
+
+            {{product.weight}}
+
+        </div>
 
     </div>
-    <div>
-        <p>{{product.description}}</p>
-    </div>
-
 </div>

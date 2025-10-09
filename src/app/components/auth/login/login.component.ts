@@ -52,15 +52,15 @@ export class LoginComponent {
   async loginUser(val: any) {
     try {
       const response = await this.service.login(val);
-      console.log('✅ Login successful:', response);
+      console.log('Login successful:', response);
 
-      // ✅ Access the token here
-      console.log('Access Token:', response.accessToken);
+      // Access the token here
+      // console.log('Access Token:', response.accessToken);
 
       localStorage.setItem('Access Token:', response.accessToken);
       this.router.navigateByUrl('/dashboard');
     } catch (error) {
-      console.error('❌ Login failed:', error);
+      console.error('Login failed:', error);
     }
   }
 
