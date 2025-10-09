@@ -1,0 +1,30 @@
+<div class="row justify-content-center">
+    <!-- {{products | json}} -->
+    @for(product of products;track product.id){
+    <mat-card class="col-md-3 m-2">
+        <app-commoncard>
+            <div card-img class="text-center">
+                @if(product.images != undefined){
+                <img [src]="product.images" alt="{{ product.title }}" class="img-fluid" />
+                }
+            </div>
+
+            <div card-title>
+                @if(product.tags?.length != undefined){
+                {{ product.tags[1] }}
+                }
+
+            </div>
+            <div card-body>
+                <p>{{product.description}}</p>
+            </div>
+            <div class="text-end" card-btn>
+                <button (click)="routeNav(product.id)" class="view-btn">View more</button>
+
+            </div>
+        </app-commoncard>
+
+    </mat-card>
+    }
+
+</div>

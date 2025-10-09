@@ -8,6 +8,7 @@ import { ChildcardComponent } from './commoncard/childcard/childcard.component';
 import { MainLayoutComponent } from './main-layout';
 import { AuthLayoutComponent } from './auth-layout';
 import { FCMTokenComponent } from './components/fcm-token/fcm-token.component';
+import { DasViewCardComponent } from './components/das-card/das-view-card/das-view-card.component';
 
 export const routes: Routes = [
     {
@@ -26,7 +27,7 @@ export const routes: Routes = [
             { path: 'dashboard', component: DashboardComponent },
             { path: 'ddform', component: DragDropFormComponent },
             { path: 'dynamicform', component: DynamicformfieldComponent },
-            // { path: 'childcard', component: ChildcardComponent },
+            { path: 'view-card', component: DasViewCardComponent },
             { path: 'fcm-token', component: FCMTokenComponent },
 
         ],

@@ -21,7 +21,12 @@ export class DummyJsonService {
   }
   async product(): Promise<any> {
     return await firstValueFrom(
-      this.http.get('https://dummyjson.com/products/1')
+      this.http.get('https://dummyjson.com/products')
+    );
+  }
+  async productview(id: any): Promise<any> {
+    return await firstValueFrom(
+      this.http.get('https://dummyjson.com/products/' + id)
     );
   }
 }

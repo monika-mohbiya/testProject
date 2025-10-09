@@ -1,10 +1,10 @@
-import { computed, Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonService {
-
+  selectedId = signal<number | null>(null);
   constructor() { }
 
   // getErrorMessage(controlName: string, control: any, formname: any): string {

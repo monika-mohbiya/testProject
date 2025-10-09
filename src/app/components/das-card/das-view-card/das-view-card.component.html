@@ -1,0 +1,19 @@
+<div class="container">
+
+    <div class="text-center">
+        @if(product.images != undefined){
+        <img [src]="product.images" alt="{{ product.title }}" class="img-fluid" />
+        }
+    </div>
+
+    <div>
+        @if(product.tags?.length != undefined){
+        {{ product.tags[1] }}
+        }
+
+    </div>
+    <div>
+        <p>{{product.description}}</p>
+    </div>
+
+</div>
