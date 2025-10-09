@@ -1,0 +1,11 @@
+{
+  "routes": {
+    "/testProject": {},
+    "/testProject/dashboard": {},
+    "/testProject/ddform": {},
+    "/testProject/dynamicform": {},
+    "/testProject/fcm-token": {},
+    "/testProject/login": {},
+    "/testProject/view-card": {}
+  }
+}
