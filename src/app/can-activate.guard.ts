@@ -11,7 +11,7 @@ export const canActivateGuard: CanActivateFn = (route, state) => {
   if (!isBrowser) {
     return false;
   } else {
-    const token = localStorage.getItem('FCM Token')
+    const token = localStorage.getItem('Access Token:')
     if (token) {
       return true;
     } else {

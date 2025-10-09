@@ -13,7 +13,7 @@ export class FirebaseMessagingService {
   requestPermission() {
     this.afMessaging.requestToken.subscribe(
       (token) => {
-        console.log('FCM Token:', token);
+        // console.log('FCM Token:', token);
         // Send this token to your server if needed
       },
       (err) => {

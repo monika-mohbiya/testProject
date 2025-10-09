@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, computed, inject, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -6,6 +6,7 @@ import { CommoncardComponent } from '../../commoncard/commoncard.component';
 import { ToastrService } from 'ngx-toastr';
 import { getMessaging, getToken, Messaging, onMessage } from 'firebase/messaging';
 import { initializeApp } from 'firebase/app';
+import { DummyJsonService } from '../../services/dummy-json.service';
 
 const environment = {
   production: false,
@@ -32,21 +33,34 @@ const environment = {
 export class DashboardComponent implements OnInit {
 
   messaging: Messaging | null = null;
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: Object,
-    private router: Router,
-    private toastrService: ToastrService
-  ) { }
+  service = inject(DummyJsonService);
+  // token = computed(() => this.service?.accessToken?? null);
+  // token = computed(() => this.service.accessToken());
+
+  router = inject(Router);
+
+  toastrService = inject(ToastrService);
+  products: any;
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 
   async ngOnInit() {
+    // console.log(this.token)
     // Initialize Firebase app and messaging but don't request permission yet
     if (isPlatformBrowser(this.platformId)) {
       const app = initializeApp(environment.firebase);
       this.messaging = getMessaging(app);
       this.listenForForegroundMessages();
     }
+    this.product()
   }
-
+  async product() {
+    try {
+      this.products = await this.service.product();
+      console.log('✅ Product Data:', this.products);
+    } catch (error) {
+      console.error('❌ Failed to fetch product:', error);
+    }
+  }
   /** Called only after user gesture (Login click) */
   async requestPermissionAndGetToken() {
     if (!this.messaging) return;
@@ -78,14 +92,7 @@ export class DashboardComponent implements OnInit {
       console.log('Message received: ', payload);
     });
   }
-  // async submit() {
-  //   this.submitted = true;
-  //   if (this.form.valid) {
-  //     // ✅ Now this happens after user gesture
-  //     await this.requestPermissionAndGetToken();
-  //     this.router.navigateByUrl('/dashboard');
-  //   }
-  // }
+
 
   async routeNav(val: string) {
     console.log(val)

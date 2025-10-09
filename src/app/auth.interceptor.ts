@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem("FCM Token")
+  const token = localStorage.getItem("Access Token:")
   if (token) {
     const cloned = req.clone({
       setHeaders: {
